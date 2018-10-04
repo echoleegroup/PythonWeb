@@ -2,7 +2,7 @@ version: "3"
 services:
   web:
     # replace username/repo:tag with your name and image details
-    image: username/repo:tag
+    image: echo3215987/flask:0.1
     deploy:
       replicas: 5
       resources:

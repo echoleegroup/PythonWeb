@@ -15,13 +15,9 @@ def main():
     index_path = os.path.join(app.static_folder, 'index.html')
     return send_file(index_path)
 
-@app.route('/getStock2327')
-def getStock2327():
-    return crawler.getStock2327()
-
-@app.route('/getStock2330')
-def getStock2330():
-    return crawler.getStock2330()
+@app.route('/getStock/<string:stockid>')
+def getStock(stockid):
+    return crawler.getStock(stockid)
 
 # Everything not declared before (not a Flask route / API endpoint)...
 @app.route('/<path:path>')
