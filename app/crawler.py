@@ -8,25 +8,24 @@ class crawler():
     def __init__(self, name):
         self.name = name
 
-    def getStock(stockid):
+    def getStock(stockid, year, monthStart, monthEnd):
         # get datetime for get stock
         now = datetime.datetime.now()
         now = now.strftime("%Y%m%d")
         #res = requests.get(
         #   'http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=' + str(now) + '&stockNo=' + stockid)
+        #   http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=20181025&stockNo=3665
 
-        #for i in range(2017, 2016, -1):
-        i = 2018
-        for j in range(1, 10):
+        for j in range(monthStart, monthEnd+1):
             jStr = '0'
             if(j<10):
                 jStr += str(j)
             else:
                 jStr = str(j)
-            print(str(i)+jStr)
+            print(str(year)+jStr)
 
             res = requests.get(
-            'http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=' + str(i) + jStr + '01' + '&stockNo=' + stockid)
+            'http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=' + str(year) + jStr + '01' + '&stockNo=' + stockid)
             json_data = json.loads(res.text)
             monthInfoArray = json_data['data']
 
@@ -42,8 +41,34 @@ class crawler():
                 print(dateStr)
 
                 #transfer
-                advance_decline = dayInfo[7].replace(",", "").replace("X", "").replace(" ", "")
-                if advance_decline != '':
+                open = dayInfo[3].replace(",", "").replace(" ", "")
+                if "--" in open:
+                    open = None
+                else:
+                    open = float(open)
+
+                high = dayInfo[4].replace(",", "").replace(" ", "")
+                if "--" in high:
+                    high = None
+                else:
+                    high = float(high)
+
+                low = dayInfo[5].replace(",", "").replace(" ", "")
+                if "--" in low:
+                    low = None
+                else:
+                    low = float(low)
+
+                close = dayInfo[6].replace(",", "").replace(" ", "")
+                if "--" in close:
+                    close = None
+                else:
+                    close = float(close)
+
+                advance_decline = dayInfo[7].replace(",", "").replace(" ", "")
+                if "X" in advance_decline:
+                    advance_decline = None
+                else:
                     advance_decline = float(advance_decline)
                 # insert stock row
                 data_stock = {
@@ -51,10 +76,10 @@ class crawler():
                     'date': dateStr,
                     'trading_volume': int(dayInfo[1].replace(",", "").replace(" ", "")),
                     'turnover_in_value': int(dayInfo[2].replace(",", "").replace(" ", "")),
-                    'open': float(dayInfo[3].replace(",", "").replace(" ", "").replace("-", "0")),
-                    'high': float(dayInfo[4].replace(",", "").replace(" ", "").replace("-", "0")),
-                    'low': float(dayInfo[5].replace(",", "").replace(" ", "").replace("-", "0")),
-                    'close': float(dayInfo[6].replace(",", "").replace(" ", "").replace("-", "0")),
+                    'open': open,
+                    'high': high,
+                    'low': low,
+                    'close': close,
                     'advance_decline': advance_decline,
                     'transaction_count': int(dayInfo[8].replace(",", "").replace(" ", "")),
                 }

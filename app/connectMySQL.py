@@ -18,41 +18,52 @@ TABLES['stock_master'] = (
     " `date` DATE NOT NULL,"
     " `trading_volume` BIGINT NOT NULL,"
     " `turnover_in_value` BIGINT NOT NULL,"
-    " `open` FLOAT NOT NULL,"
-    " `high` FLOAT NOT NULL,"
-    " `low` FLOAT NOT NULL,"
-    " `close` FLOAT NOT NULL,"
+    " `open` FLOAT NULL,"
+    " `high` FLOAT NULL,"
+    " `low` FLOAT NULL,"
+    " `close` FLOAT NULL,"
     " `advance_decline` FLOAT DEFAULT NULL,"
     " `transaction_count` BIGINT NOT NULL,"
     "  PRIMARY KEY (`stock_id`, `date`)"
     ") ENGINE=InnoDB")
 
+TABLES['stock_list'] = (
+    "CREATE TABLE `stock_list` ("
+    " `stock_id` VARCHAR(10) NOT NULL,"
+    "  PRIMARY KEY (`stock_id`, `date`)"
+    ") ENGINE=InnoDB")
+
+
+def getConnection():
+    try:
+        cnx = mysql.connector.connect(**config)
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            print("Something is wrong with your user name or password")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            print("Database does not exist")
+        else:
+            print(err)
+    else:
+        # cnx.close()
+        return cnx
+
+def closeConnection(cnx):
+    cursor = cnx.cursor()
+    cursor.close()
+    cnx.close()
+
+
 class connect():
     def __init__(self, name):
         self.name = name
-
-    def getConnection():
-
-        try:
-            cnx = mysql.connector.connect(**config)
-        except mysql.connector.Error as err:
-            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-                print("Something is wrong with your user name or password")
-            elif err.errno == errorcode.ER_BAD_DB_ERROR:
-                print("Database does not exist")
-            else:
-                print(err)
-        else:
-            cnx.close()
 
     def create_database():
         cnx = mysql.connector.connect(user='root', password='1q2w3e4r', host='127.0.0.1')
         cursor = cnx.cursor()
         try:
-            print(2)
             cursor.execute(
                 "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(DB_NAME))
-            print(3)
         except mysql.connector.Error as err:
             print("Failed creating database: {}".format(err))
             exit(1)
@@ -62,6 +73,7 @@ class connect():
 
     def create_table():
         cnx = mysql.connector.connect(**config)
+        #cnx = getConnection()
         cursor = cnx.cursor()
 
         for table_name in TABLES:
@@ -89,3 +101,11 @@ class connect():
 
         cursor.close()
         cnx.close()
+
+    def query_row(query):
+        cnx = getConnection()
+        cursor = cnx.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+        closeConnection(cnx)
+        return result

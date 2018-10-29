@@ -1,9 +1,12 @@
 import os
 from crawler import crawler
+from connectMySQL import connect
 
-from flask import Flask, send_file
+from flask import Flask, send_file, render_template
+from flask_bootstrap import Bootstrap
+
 app = Flask(__name__)
-
+bootstrap = Bootstrap(app) #bootstrap
 
 @app.route("/hello")
 def hello():
@@ -12,14 +15,16 @@ def hello():
 
 @app.route("/")
 def main():
-    index_path = os.path.join(app.static_folder, 'index.html')
+    stock_id = connect.query_row("select stock_id from stock_list")
+    index_path = os.path.join(app.static_folder, '../templates/basic.html')
     return send_file(index_path)
 
-@app.route('/getStock/<string:stockid>')
-def getStock(stockid):
-    return crawler.getStock(stockid)
+@app.route('/getStock/<string:stockid>/<int:year>/<int:monthStart>/<int:monthEnd>')
+def getStock(stockid, year, monthStart, monthEnd):
+    return crawler.getStock(stockid, year, monthStart, monthEnd)
 
 # Everything not declared before (not a Flask route / API endpoint)...
+'''
 @app.route('/<path:path>')
 def route_frontend(path):
     # ...could be a static file needed by the front end that
@@ -31,7 +36,7 @@ def route_frontend(path):
     else:
         index_path = os.path.join(app.static_folder, 'index.html')
         return send_file(index_path)
-
+'''
 
 if __name__ == "__main__":
     # Only for debugging while developing
