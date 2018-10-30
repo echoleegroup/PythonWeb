@@ -1,31 +1,44 @@
-{% extends "../bootstrap/base.html" %}
+{% extends "bootstrap/base.html" %}
 
 {% block content %}
-  <div class="container">
-  {%- with messages = get_flashed_messages(with_categories=True) %}
-  {%- if messages %}
-    <div class="row">
-      <div class="col-md-12">
-        {{utils.flashed_messages(messages)}}
-      </div>
-    </div>
-  {%- endif %}
-  {%- endwith %}
-    <div class="jumbotron">
-      <h1>Welcome to Flask-Bootstrap</h1>
-      <p>This example application demonstrates some (but not all!) of the
-      features of <a href="http://pythonhosted.org/Flask-Bootstrap">
-      Flask-Bootstrap</a>.</p>
-      <p>
-        <a class="btn btn-lg btn-default" role="button"
+    <div class="container">
+    {%- with messages = get_flashed_messages(with_categories=True) %}
+    {%- if messages %}
+        <div class="row">
+            <div class="col-md-12">
+                {{utils.flashed_messages(messages)}}
+            </div>
+        </div>
+        {%- endif %}
+        {%- endwith %}
+        <div class="jumbotron">
+            <p>Welcome to Flask-Bootstrap</p>
+            <p>This example application demonstrates some (but not all!) of the features of</p>
+            <p>
+                <a class="btn btn-lg btn-default" role="button"
            href="http://pythonhosted.org/Flask-Bootstrap" >Show docs</a>
-      </p>
+            </p>
+        </div>
+            <form id="ma_stock" class="form-inline" action = "{{url_for('getMA')}}" method = "POST">
+                <div class="form-group">
+                    <label for="stock_id">MA</label>
+                    <select class="form-control" style="min-width:80px;max-width:120px" id="stock_id" name="stock_id">
+                        {% for stockid in stock_list %}
+                            <option value={{stockid}}>{{stockid}}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="days">Days</label>
+                    <select class="form-control" style="min-width:80px;max-width:120px" id="days" name="days">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="100">100</option>
+                        <option value="200">200</option>
+                        <option value="240">240</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary mb-2">Search</button>
+                </div>
+            </form>
+        </div>
     </div>
-   </div>
-   <form class="form-group">
-       <select class="form-control">
-           <option value="g">tt</option>
-       </select>
-   </form>
-
 {% endblock %}

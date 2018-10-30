@@ -83,9 +83,9 @@ class crawler():
         now = now.strftime("%Y%m%d")
 
         stock_list = connect.query_list("select stock_id from stock_list")
-        for stockid_tup in stock_list:
-            # type from tup to str
-            stockid = ''.join(stockid_tup)
+        for stockid_tuple in stock_list:
+            # type from tuple  to str
+            stockid = ''.join(stockid_tuple)
 
             res = requests.get(
                 'http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=' + str(now) + '&stockNo=' + stockid)

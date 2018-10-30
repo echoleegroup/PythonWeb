@@ -1,8 +1,9 @@
 import os
 from crawler import crawler
 from connectMySQL import connect
+from calculation import stock_info
 
-from flask import Flask, send_file, render_template
+from flask import Flask, send_file, render_template, request, url_for
 from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
@@ -10,10 +11,12 @@ bootstrap = Bootstrap(app) #bootstrap
 
 @app.route("/")
 def main():
-    stock_list = connect.query_list("select stock_id from stock_list")
-    #index_path = os.path.join(app.static_folder, '../templates/bootstrap/basic.html')
-    index_path = os.path.join(app.static_folder, '../templates/index.html')
-    return send_file(index_path)
+    stockid_tuple = connect.query_list("select stock_id from stock_list")
+    stock_list = list()
+    for stockid in stockid_tuple:
+        stock_list.append(str(stockid[0]))
+
+    return render_template('index.html', stock_list=stock_list)
 
 @app.route('/getStock/<string:stockid>/<int:year>/<int:monthStart>/<int:monthEnd>')
 def getStock(stockid, year, monthStart, monthEnd):
@@ -26,6 +29,12 @@ def getMonthStock(stockid):
 @app.route('/getTodayStock')
 def getTodayStock():
     return crawler.getTodayStock()
+
+@app.route('/getMA', methods = ['POST', 'GET'])
+def getMA():
+    ma_stock = request.form
+    ma = stock_info.getMA(ma_stock['stock_id'], ma_stock['days'])
+    return str(ma)
 
 # Everything not declared before (not a Flask route / API endpoint)...
 
