@@ -8,23 +8,27 @@ from flask_bootstrap import Bootstrap
 app = Flask(__name__)
 bootstrap = Bootstrap(app) #bootstrap
 
-@app.route("/hello")
-def hello():
-    return "Hello World from Flask in a uWSGI Nginx Docker container with \
-     Python 3.6 (from the example template)"
-
 @app.route("/")
 def main():
-    stock_id = connect.query_row("select stock_id from stock_list")
-    index_path = os.path.join(app.static_folder, '../templates/basic.html')
+    stock_list = connect.query_list("select stock_id from stock_list")
+    #index_path = os.path.join(app.static_folder, '../templates/bootstrap/basic.html')
+    index_path = os.path.join(app.static_folder, '../templates/index.html')
     return send_file(index_path)
 
 @app.route('/getStock/<string:stockid>/<int:year>/<int:monthStart>/<int:monthEnd>')
 def getStock(stockid, year, monthStart, monthEnd):
     return crawler.getStock(stockid, year, monthStart, monthEnd)
 
+@app.route('/getMonthStock/<string:stockid>')
+def getMonthStock(stockid):
+    return crawler.getMonthStock(stockid)
+
+@app.route('/getTodayStock')
+def getTodayStock():
+    return crawler.getTodayStock()
+
 # Everything not declared before (not a Flask route / API endpoint)...
-'''
+
 @app.route('/<path:path>')
 def route_frontend(path):
     # ...could be a static file needed by the front end that
@@ -36,7 +40,7 @@ def route_frontend(path):
     else:
         index_path = os.path.join(app.static_folder, 'index.html')
         return send_file(index_path)
-'''
+
 
 if __name__ == "__main__":
     # Only for debugging while developing

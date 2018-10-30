@@ -70,7 +70,6 @@ class connect():
         cursor.close()
         cnx.close()
 
-
     def create_table():
         cnx = mysql.connector.connect(**config)
         #cnx = getConnection()
@@ -102,10 +101,18 @@ class connect():
         cursor.close()
         cnx.close()
 
-    def query_row(query):
+    def query_list(query):
         cnx = getConnection()
         cursor = cnx.cursor()
         cursor.execute(query)
         result = cursor.fetchall()
+        closeConnection(cnx)
+        return result
+
+    def query_row(query):
+        cnx = getConnection()
+        cursor = cnx.cursor()
+        cursor.execute(query)
+        result = cursor.fetchone()
         closeConnection(cnx)
         return result

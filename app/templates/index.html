@@ -1,4 +1,5 @@
-{% extends "bootstrap/base.html" %}
+{% extends "../bootstrap/base.html" %}
+
 {% block content %}
   <div class="container">
   {%- with messages = get_flashed_messages(with_categories=True) %}
@@ -10,13 +11,21 @@
     </div>
   {%- endif %}
   {%- endwith %}
-    <div class="form-group">
-      <select class="form-control">
-          <option value="volvo">Volvo</option>
-          <option value="saab">Saab</option>
-          <option value="opel">Opel</option>
-          <option value="audi">Audi</option>
-      </select>
+    <div class="jumbotron">
+      <h1>Welcome to Flask-Bootstrap</h1>
+      <p>This example application demonstrates some (but not all!) of the
+      features of <a href="http://pythonhosted.org/Flask-Bootstrap">
+      Flask-Bootstrap</a>.</p>
+      <p>
+        <a class="btn btn-lg btn-default" role="button"
+           href="http://pythonhosted.org/Flask-Bootstrap" >Show docs</a>
+      </p>
     </div>
    </div>
-{%- endblock %}
+   <form class="form-group">
+       <select class="form-control">
+           <option value="g">tt</option>
+       </select>
+   </form>
+
+{% endblock %}
