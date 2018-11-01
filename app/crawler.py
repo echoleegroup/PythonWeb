@@ -3,7 +3,7 @@ import requests
 import json
 from connectMySQL import connect
 import time
-
+from calculation import stock_info
 
 # connect.create_database()
 # connect.create_table()
@@ -81,21 +81,22 @@ class crawler():
         # get datetime for get stock
         now = datetime.datetime.now()
         now = now.strftime("%Y%m%d")
+        today = now.date()
 
-        stock_list = connect.query_list("select stock_id from stock_list")
-        for stockid_tuple in stock_list:
-            # type from tuple  to str
-            stockid = ''.join(stockid_tuple)
-
+        stock_list_tuple = connect.query_list("SELECT stock_id FROM stock.stock_list")
+        stock_list = connect.transTupleToList(stock_list_tuple, 0)
+        for stock_id in stock_list:
             res = requests.get(
-                'http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=' + str(now) + '&stockNo=' + stockid)
+                'http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=' + str(now) + '&stockNo=' + stock_id)
             #   http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=20181025&stockNo=3665
             json_data = json.loads(res.text)
             monthInfoArray = json_data['data']
             monthInfoArray.reverse()
+            # get today stock info
             monthInfoArray = [monthInfoArray[0]]
 
-            data_stock = saveStockInfo(monthInfoArray, stockid)
+            data_stock = saveStockInfo(monthInfoArray, stock_id)
+            stock_info.calculateStockDayLine(stock_id, today)
 
         return data_stock
 
@@ -110,7 +111,6 @@ class crawler():
         monthInfoArray = json_data['data']
 
         data_stock = saveStockInfo(monthInfoArray, stockid)
-
         return data_stock
 
     def getStock(stockid, year, monthStart, monthEnd):

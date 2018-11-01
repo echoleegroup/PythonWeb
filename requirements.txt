@@ -1,2 +1,7 @@
 Flask
 requests
+pyecharts
+flask_bootstrap
+mysql.connector
+pandas
+sqlalchemy

@@ -36,6 +36,14 @@ def getMA():
     ma = stock_info.getMA(ma_stock['stock_id'], ma_stock['days'])
     return str(ma)
 
+@app.route('/getStockDayLine/<string:stockid>/<string:date>')
+def getStockDayLine(stockid, date):
+    return stock_info.calculateStockDayLine(stockid, date)
+
+@app.route('/getDayLine')
+def getDayLine():
+    return stock_info.calculateDayLine()
+
 # Everything not declared before (not a Flask route / API endpoint)...
 
 @app.route('/<path:path>')

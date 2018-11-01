@@ -1,5 +1,8 @@
 import mysql.connector
 from mysql.connector import errorcode
+import pandas as pd
+
+from sqlalchemy import create_engine
 
 config = {
   'user': 'root',
@@ -116,3 +119,30 @@ class connect():
         result = cursor.fetchone()
         closeConnection(cnx)
         return result
+
+    def transTupleToList(result, index):
+        List = list()
+        for element in result:
+            List.append(element[index])
+        return List
+
+    def transTupleToObject(result, key):
+        obj = {}
+        column = []
+        i = 0
+        for i in range(0, len(key)):
+            column.append([element[i] for element in result])
+            obj[key[i]] = column[i]
+        return obj
+
+    def createEngine():
+        try:
+            # engine = create_engine('mysql+mysqlconnector://os.environ['MYSQL_USER']:os.environ['MYSQL_PASSWORD']@os.environ['MYSQL_HOST_IP']:os.environ['MYSQL_PORT']/sandbox', echo=False)
+            engine = create_engine('mysql+pymysql://root:1q2w3e4r@localhost:3306/stock')
+        except sqlalchemy.exc.OperationalError as e:
+            print('Error is ' + str(e))
+        except sqlalchemy.exc.InternalError as e:
+            print('Error is ' + str(e))
+            sys.exit()
+        return engine
+
