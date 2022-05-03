@@ -5,6 +5,7 @@ from calculation import stock_info
 
 from flask import Flask, send_file, render_template, request, url_for
 from flask_bootstrap import Bootstrap
+from werkzeug.utils import safe_join
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app) #bootstrap
@@ -50,7 +51,7 @@ def getDayLine():
 def route_frontend(path):
     # ...could be a static file needed by the front end that
     # doesn't use the `static` path (like in `<script src="bundle.js">`)
-    file_path = os.path.join(app.static_folder, path)
+    file_path = safe_join(app.static_folder, path)
     if os.path.isfile(file_path):
         return send_file(file_path)
     # ...or should be handled by the SPA's "router" in front end
